@@ -2,6 +2,12 @@ def mutations(a, b, present, turn):
     alice = a[:]
     bob = b[:]
     #TODO:need to clean initial lists
+    for word in alice:
+        if len(set(word)) < 4:
+            alice.remove(word)
+    for word in bob:
+        if len(set(word)) < 4:
+            bob.remove(word)
     initial = present
     players = ["alice", "bob"]
     fails = [False, False]
