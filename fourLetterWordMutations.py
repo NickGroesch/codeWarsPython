@@ -1,13 +1,17 @@
 def mutations(a, b, present, turn):
+    tried = [present]
     alice = a[:]
     bob = b[:]
-    #TODO:need to clean initial lists
-    for word in alice:
-        if len(set(word)) < 4:
+    print(len(alice), len(bob))
+    for word in alice:  #TODO:this cleaning is not working- very frustrating!
+        if len(set(word)) != 4:
             alice.remove(word)
     for word in bob:
-        if len(set(word)) < 4:
+        if len(set(word)) != 4:
             bob.remove(word)
+    print(len(alice), len(bob))
+    print(alice)
+    print(bob)
     initial = present
     players = ["alice", "bob"]
     fails = [False, False]
@@ -15,41 +19,32 @@ def mutations(a, b, present, turn):
     gameOver = False
     turn = bool(turn)
     player = alice if not turn else bob
-    # print(present)
+    print(present)
     while (not gameOver):
         # print("p", players[turn], player)
         for index, word in enumerate(player):
-            if word[:3] == present[:3]:
-                present = player[index]
-                player.remove(present)
-                break
-            elif word[1:] == present[1:]:
-                present = player[index]
-                player.remove(present)
-                break
-            elif word[0] == present[0] and word[2:] == present[2:]:
-                present = player[index]
-                player.remove(present)
-                break
-            elif word[:2] == present[:2] and word[3] == present[3]:
-                present = player[index]
-                player.remove(present)
-                break
-            #above checks successful plays, below
-            if index == len(player) - 1:
-                fails[turn] = not fails[turn]
-                # print("fails", fails)
-                # print('player {0} fails initial word was {1}, present is {2}'.
-                #       format(players[turn], initial, present))
-                if present != initial:
+            if word not in tried:
+                if word[:3] == present[:3] or word[1:] == present[1:] or (
+                        word[0] == present[0] and word[2:] == present[2:]) or (
+                            word[:2] == present[:2] and word[3] == present[3]):
+                    present = player[index]
+                    tried.append(present)
+                    if present in alice:
+                        alice.remove(present)
+                    if present in bob:
+                        bob.remove(present)
+                    break
+                if index == len(player) - 1:
+                    fails[turn] = True
+                    if present != initial:
+                        return int(not turn)
+                    else:
+                        oneFailed = True
+                if oneFailed and present != initial:
                     return int(not turn)
-                else:
-                    oneFailed = True
-            if fails[0] == True and fails[1] == True:
-                gameOver = True
-        # print("{0} says {1}".format(players[turn], present))
-        if oneFailed and present != initial:
-            return int(turn)
+        if fails[0] == True and fails[1] == True:
+            gameOver = True
+        print("{0} says {1}".format(players[turn], present))
         turn = not turn
         player = alice if not turn else bob
 
@@ -75,3 +70,5 @@ print(
     # mutations(alice, bob, "mark", 1)  #  0  Bob   fails first, Alice   wins
     # mutations(alice, bob, "calm", 1)  # -1  Bob   fails first, neither wins
 )
+
+print('xxx', len(set("hill")), set("lilt"))
